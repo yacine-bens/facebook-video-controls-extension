@@ -23,6 +23,11 @@ This is a browser extension that enables controls to Facebook Reels and Stories,
 2. The video controls will be displayed below the video player.
 3. Use the controls to customize your video playback experience.
 
+## Screenshots
+![Facebook_Video_Controls_Screenshot_1.png](/screenshots/Facebook_Video_Controls_Screenshot_1.png)
+![Facebook_Video_Controls_Screenshot_2.png](/screenshots/Facebook_Video_Controls_Screenshot_2.png)
+![Facebook_Video_Controls_Screenshot_3.png](/screenshots/Facebook_Video_Controls_Screenshot_3.png)
+
 ## Attribution
 The extension icon is created by <a href="https://www.flaticon.com/free-icons/play-button" title="play button icons">Freepik - Flaticon</a>
 
