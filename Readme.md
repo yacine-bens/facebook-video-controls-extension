@@ -10,6 +10,10 @@ This is a browser extension that enables controls to Facebook Reels and Stories,
 - Fullscreen mode
 
 ## Installation
+### - Mozilla / Chrome Web Store
+- [Chrome Web Store](https://chrome.google.com/webstore/detail/nhclljcpfmmaiojbhhnkpjcfmacfcian)
+- [Mozilla Addons (pending review)](#)
+### - Manual Installation
 1. Clone this repository and run `npm i`.
 2. Run `npm run build` for Chrome, `npm run build:firefox` for Firefox.
 3. Open your browser's extension settings.
