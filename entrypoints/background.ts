@@ -40,6 +40,7 @@ export default defineBackground(() => {
       id: "facebook-video-controls",
       title: "Facebook Video Controls",
       contexts: ["all"],
+      documentUrlPatterns: ["*://*.facebook.com/*"],
     });
   });
 
