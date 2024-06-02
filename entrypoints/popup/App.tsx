@@ -11,11 +11,18 @@ function App() {
 		{ value: 'context-menu', label: 'Using Context-menu (Right Click)' },
 	];
 
-	const showControlsStorage = storage.defineItem<string>('local:showControls', { defaultValue: 'automatic' });
+	const showControlsStorage = storage.defineItem<string>('local:showControls', { defaultValue: 'context-menu' });
 
 	const handleChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-		await showControlsStorage.setValue(event.target.value);
-		setShowControlsState(event.target.value);
+		if (event.target.value === 'automatic') {
+			const granted = await chrome.permissions.request({
+				origins: ['*://*.facebook.com/*']
+			});
+
+			if (!granted) {
+				return;
+			}
+		};
 
 		chrome.contextMenus.removeAll(() => {
 			if (event.target.value === 'context-menu') {
@@ -27,6 +34,9 @@ function App() {
 				});
 			}
 		});
+
+		await showControlsStorage.setValue(event.target.value);
+		setShowControlsState(event.target.value);
 	};
 
 	useEffect(() => {

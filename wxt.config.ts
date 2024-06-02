@@ -16,5 +16,9 @@ export default defineConfig({
             "activeTab",
             "storage",
         ],
+        // @ts-expect-error
+        optional_host_permissions: [
+            "*://*.facebook.com/*"
+        ]
     }
 });
