@@ -22,12 +22,17 @@ This is a browser extension that enables controls to Facebook Reels and Stories,
 6. The extension should now be installed and ready to use.
 
 ## Usage
+Choose method from popup
+### Automatic
+1. Open Facebook and navigate to a Reel or a Story. That's it.
+### Context-menu
 1. Open Facebook and navigate to a Reel or a Story.
 2. Right click anywhere on the page, then click the context menu item `Facebook Video Controls`
 2. The video controls will be displayed below the video player.
 3. Use the controls to customize your video playback experience.
 
 ## Screenshots
+![Facebook_Video_Controls_Screenshot_4.png](/screenshots/Facebook_Video_Controls_Screenshot_4.png)
 ![Facebook_Video_Controls_Screenshot_1.png](/screenshots/Facebook_Video_Controls_Screenshot_1.png)
 ![Facebook_Video_Controls_Screenshot_2.png](/screenshots/Facebook_Video_Controls_Screenshot_2.png)
 ![Facebook_Video_Controls_Screenshot_3.png](/screenshots/Facebook_Video_Controls_Screenshot_3.png)

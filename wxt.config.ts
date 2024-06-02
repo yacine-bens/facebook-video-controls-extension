@@ -1,7 +1,11 @@
 import { defineConfig } from 'wxt';
+import react from '@vitejs/plugin-react';
 
 // See https://wxt.dev/api/config.html
 export default defineConfig({
+    vite: () => ({
+        plugins: [react()],
+    }),
     manifest: {
         name: "Facebook Video Controls",
         author: "https://github.com/yacine-bens",
@@ -10,6 +14,7 @@ export default defineConfig({
             "contextMenus",
             "scripting",
             "activeTab",
+            "storage",
         ],
     }
 });
