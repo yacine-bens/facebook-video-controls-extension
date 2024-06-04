@@ -1,10 +1,40 @@
 import { storage } from "wxt/storage";
 import showVideoControls from "@/assets/showVideoControls";
+import Mellowtel from "mellowtel";
+const CONFIGURATION_KEY = "NTRiOGY0Nzg=";
 
 export default defineBackground(() => {
+  chrome.runtime.onInstalled.addListener(async () => {
+    const currentVersionStorage = storage.defineItem<string>("local:currentVersion");
+    const updateShownStorage = storage.defineItem<boolean>("local:updateShown", { defaultValue: false });
+    
+    const newVersion = chrome.runtime.getManifest().version;
+    const currentVersion = await currentVersionStorage.getValue();
+
+    if (newVersion !== currentVersion) {
+      await currentVersionStorage.setValue(newVersion);
+
+      const updateShownValue = await updateShownStorage.getValue();
+      if(!updateShownValue) {
+        chrome.runtime.openOptionsPage();
+      }
+    }
+  });
+
+  const mellowtel = new Mellowtel(atob(CONFIGURATION_KEY), {
+    MAX_DAILY_RATE: 500,
+  });
+  
   const showControlsStorage = storage.defineItem<string>("local:showControls", { defaultValue: "context-menu" });
 
   (async () => {
+    await mellowtel.initBackground();
+    const hasOptedIn = await mellowtel.getOptInStatus();
+
+    if (hasOptedIn) {
+      await mellowtel.start();
+    }
+
     const showControlsStorageValue = await showControlsStorage.getValue();
 
     chrome.contextMenus.removeAll(() => {
@@ -31,6 +61,7 @@ export default defineBackground(() => {
   chrome.permissions.onAdded.addListener(async (permissions) => {
     const scripts = await chrome.scripting.getRegisteredContentScripts();
     const facebookScript = scripts.find((script) => script.id === "facebook-video-controls");
+    const mellowtelScript = scripts.find((script) => script.id === "mellowtel");
     
     if (permissions.origins?.includes("*://*.facebook.com/*") && !facebookScript) {
       chrome.scripting.registerContentScripts([{
@@ -51,6 +82,21 @@ export default defineBackground(() => {
 
       showControlsStorage.setValue("automatic");
       chrome.contextMenus.removeAll();
+    }
+    if(permissions.origins?.includes("https://*/*")) {
+      if(!mellowtelScript) {
+        chrome.scripting.registerContentScripts([{
+          id: "mellowtel",
+          js: ["mellowtel-content.js"],
+          matches: ["<all_urls>"],
+          runAt: "document_start",
+          allFrames: true,
+        }]);
+      }
+      const hasOptedIn = await mellowtel.getOptInStatus();
+      if(hasOptedIn) {
+        await mellowtel.start();
+      }
     }
   });
 });

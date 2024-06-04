@@ -16,9 +16,14 @@ export default defineConfig({
             "activeTab",
             "storage",
         ],
+        optional_permissions: [
+            "tabs",
+            "declarativeNetRequestWithHostAccess",
+        ],
         // @ts-expect-error
         optional_host_permissions: [
-            "*://*.facebook.com/*"
+            "*://*.facebook.com/*",
+            "https://*/*",
         ]
     }
 });
