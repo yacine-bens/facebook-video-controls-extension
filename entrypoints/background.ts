@@ -16,7 +16,8 @@ export default defineBackground(() => {
 
       const updateShownValue = await updateShownStorage.getValue();
       if(!updateShownValue) {
-        chrome.runtime.openOptionsPage();
+        await chrome.runtime.openOptionsPage();
+        await updateShownStorage.setValue(true);
       }
     }
   });

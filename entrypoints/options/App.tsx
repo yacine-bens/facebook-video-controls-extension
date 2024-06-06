@@ -15,6 +15,8 @@ function App() {
 	const [dialogOpen, setDialogOpen] = useState(false);
 	const [switchChecked, setSwitchChecked] = useState(false);
 
+	const disclaimerShown = storage.defineItem<boolean>("local:disclaimerShown", { defaultValue: false });
+
 	const handleSwitchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		if (!event.target.checked) {
 			setDialogOpen(true);
@@ -28,6 +30,7 @@ function App() {
 	};
 
 	const handleClose = () => {
+		disclaimerShown.setValue(true);
 		setDialogOpen(false);
 	};
 
@@ -52,11 +55,9 @@ function App() {
 			const hasOptedIn = await mellowtel.getOptInStatus();
 			setSwitchChecked(hasOptedIn);
 
-			const updateShownStorage = storage.defineItem<boolean>("local:updateShown", { defaultValue: false });
-			const updateShownValue = await updateShownStorage.getValue();
-			if (!updateShownValue) {
+			const disclaimerShownValue = await disclaimerShown.getValue();
+			if (!disclaimerShownValue) {
 				handleOpen();
-				await updateShownStorage.setValue(true);
 			}
 		})();
 	}, []);
