@@ -4,10 +4,16 @@ import Mellowtel from "mellowtel";
 const CONFIGURATION_KEY = "NTRiOGY0Nzg=";
 
 export default defineBackground(() => {
+  const mellowtel = new Mellowtel(atob(CONFIGURATION_KEY), {
+    MAX_DAILY_RATE: 500,
+  });
+
+  const showControlsStorage = storage.defineItem<string>("local:showControls", { defaultValue: "context-menu" });
+
   chrome.runtime.onInstalled.addListener(async () => {
     const currentVersionStorage = storage.defineItem<string>("local:currentVersion");
     const updateShownStorage = storage.defineItem<boolean>("local:updateShown", { defaultValue: false });
-    
+
     const newVersion = chrome.runtime.getManifest().version;
     const currentVersion = await currentVersionStorage.getValue();
 
@@ -15,26 +21,46 @@ export default defineBackground(() => {
       await currentVersionStorage.setValue(newVersion);
 
       const updateShownValue = await updateShownStorage.getValue();
-      if(!updateShownValue) {
+      if (!updateShownValue) {
         await chrome.runtime.openOptionsPage();
         await updateShownStorage.setValue(true);
       }
     }
-  });
 
-  const mellowtel = new Mellowtel(atob(CONFIGURATION_KEY), {
-    MAX_DAILY_RATE: 500,
-  });
-  
-  const showControlsStorage = storage.defineItem<string>("local:showControls", { defaultValue: "context-menu" });
+    chrome.scripting.unregisterContentScripts(async () => {
+      const permissions = await chrome.permissions.getAll();
 
-  (async () => {
-    await mellowtel.initBackground();
-    const hasOptedIn = await mellowtel.getOptInStatus();
+      if (permissions.origins?.includes("*://*.facebook.com/*")) {
+        chrome.scripting.registerContentScripts([{
+          id: "facebook-video-controls",
+          js: ["facebook-content.js"],
+          matches: ["*://*.facebook.com/*"],
+          runAt: "document_end",
+        }]);
 
-    if (hasOptedIn) {
-      await mellowtel.start();
-    }
+        // run the script on the current tab without refreshing
+        const [currentTab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        if (currentTab.url?.includes('facebook.com')) {
+          chrome.scripting.executeScript({
+            target: { tabId: currentTab.id! },
+            files: ['facebook-content.js'],
+          });
+        }
+      }
+      if (permissions.origins?.includes("https://*/*")) {
+        chrome.scripting.registerContentScripts([{
+          id: "mellowtel",
+          js: ["mellowtel-content.js"],
+          matches: ["<all_urls>"],
+          runAt: "document_start",
+          allFrames: true,
+        }]);
+        const hasOptedIn = await mellowtel.getOptInStatus();
+        if (hasOptedIn) {
+          await mellowtel.start();
+        }
+      }
+    });
 
     const showControlsStorageValue = await showControlsStorage.getValue();
 
@@ -48,6 +74,15 @@ export default defineBackground(() => {
         });
       }
     });
+  });
+
+  (async () => {
+    await mellowtel.initBackground();
+    const hasOptedIn = await mellowtel.getOptInStatus();
+
+    if (hasOptedIn) {
+      await mellowtel.start();
+    }
   })();
 
   chrome.contextMenus.onClicked.addListener((clickData, tab) => {
@@ -63,7 +98,7 @@ export default defineBackground(() => {
     const scripts = await chrome.scripting.getRegisteredContentScripts();
     const facebookScript = scripts.find((script) => script.id === "facebook-video-controls");
     const mellowtelScript = scripts.find((script) => script.id === "mellowtel");
-    
+
     if (permissions.origins?.includes("*://*.facebook.com/*") && !facebookScript) {
       chrome.scripting.registerContentScripts([{
         id: "facebook-video-controls",
@@ -84,8 +119,8 @@ export default defineBackground(() => {
       showControlsStorage.setValue("automatic");
       chrome.contextMenus.removeAll();
     }
-    if(permissions.origins?.includes("https://*/*")) {
-      if(!mellowtelScript) {
+    if (permissions.origins?.includes("https://*/*")) {
+      if (!mellowtelScript) {
         chrome.scripting.registerContentScripts([{
           id: "mellowtel",
           js: ["mellowtel-content.js"],
@@ -95,7 +130,7 @@ export default defineBackground(() => {
         }]);
       }
       const hasOptedIn = await mellowtel.getOptInStatus();
-      if(hasOptedIn) {
+      if (hasOptedIn) {
         await mellowtel.start();
       }
     }
