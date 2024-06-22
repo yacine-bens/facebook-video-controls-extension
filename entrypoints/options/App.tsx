@@ -5,7 +5,7 @@ import screenshot from '@/screenshots/Facebook_Video_Controls_Screenshot_4.png';
 import IosSwitch from "@/assets/components/IosSwitch";
 import { storage } from "wxt/storage";
 import Mellowtel from "mellowtel";
-const CONFIGURATION_KEY = "NTRiOGY0Nzg=";
+const CONFIGURATION_KEY = "YzQ3ODQ0Yjg=";
 
 function App() {
 	const mellowtel = new Mellowtel(atob(CONFIGURATION_KEY), {
@@ -18,11 +18,12 @@ function App() {
 	const disclaimerShown = storage.defineItem<boolean>("local:disclaimerShown", { defaultValue: false });
 
 	const handleSwitchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-		if (!event.target.checked) {
-			setDialogOpen(true);
-			return;
+		if (event.target.checked) {
+			handleOptIn();
 		}
-		handleOptIn();
+		else {
+			handleOptOut();
+		}
 	};
 
 	const handleOpen = () => {
@@ -40,6 +41,10 @@ function App() {
 		if (started) {
 			setSwitchChecked(true);
 			handleClose();
+		}
+		else {
+			await mellowtel.optOut();
+			setSwitchChecked(false);
 		}
 	};
 

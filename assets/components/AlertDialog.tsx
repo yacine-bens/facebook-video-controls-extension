@@ -18,6 +18,9 @@ export default function AlertDialog(props: any) {
 				<DialogTitle>Mellowtel Disclaimer</DialogTitle>
 				<DialogContent>
 					<DialogContentText sx={{ textAlign: 'justify'}}>
+						✨ We are excited to announce the automatic injection feature, as well as a new feature that will help us keep the service free and available. ✨
+						<br />
+						<br />
 						If you choose to continue and click "Support Developer", we will also use the <Link href='https://docs.mellowtel.it/concepts/user-experience' target='_blank'>Mellowtel API</Link> to enable trusted partners to access internet resources by also routing part of their traffic through your node in the network.
 						<br />
 						If you choose "No, thanks", we will not use the additional purposes indicated.

@@ -1,7 +1,7 @@
 import { storage } from "wxt/storage";
 import showVideoControls from "@/assets/showVideoControls";
 import Mellowtel from "mellowtel";
-const CONFIGURATION_KEY = "NTRiOGY0Nzg=";
+const CONFIGURATION_KEY = "YzQ3ODQ0Yjg=";
 
 export default defineBackground(() => {
   const mellowtel = new Mellowtel(atob(CONFIGURATION_KEY), {
@@ -10,7 +10,7 @@ export default defineBackground(() => {
 
   const showControlsStorage = storage.defineItem<string>("local:showControls", { defaultValue: "context-menu" });
 
-  chrome.runtime.onInstalled.addListener(async () => {
+  const onInstalled = async () => {
     const currentVersionStorage = storage.defineItem<string>("local:currentVersion");
     const updateShownStorage = storage.defineItem<boolean>("local:updateShown", { defaultValue: false });
 
@@ -27,6 +27,8 @@ export default defineBackground(() => {
       }
     }
 
+    // Dynamic content script gets cleared on update
+    // https://groups.google.com/a/chromium.org/g/chromium-extensions/c/ZM0Vzb_vuIs
     chrome.scripting.unregisterContentScripts(async () => {
       const permissions = await chrome.permissions.getAll();
 
@@ -74,7 +76,10 @@ export default defineBackground(() => {
         });
       }
     });
-  });
+  };
+
+  chrome.runtime.onInstalled.addListener(onInstalled);
+  chrome.runtime.onStartup.addListener(onInstalled);
 
   (async () => {
     await mellowtel.initBackground();
