@@ -3,13 +3,14 @@ import { Box, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import screenshot from '@/screenshots/Facebook_Video_Controls_Screenshot_4.png';
 import IosSwitch from "@/assets/components/IosSwitch";
-import { storage } from "wxt/storage";
+import { storage } from "#imports";
 import Mellowtel from "mellowtel";
-const CONFIGURATION_KEY = "YzQ3ODQ0Yjg=";
+import { CONFIGURATION_KEY, MAX_DAILY_RATE, DISABLE_LOGS } from "@/constants";
 
 function App() {
-	const mellowtel = new Mellowtel(atob(CONFIGURATION_KEY), {
-		MAX_DAILY_RATE: 500,
+	const mellowtel = new Mellowtel(CONFIGURATION_KEY, {
+		MAX_DAILY_RATE,
+		disableLogs: DISABLE_LOGS,
 	});
 
 	const [dialogOpen, setDialogOpen] = useState(false);
@@ -36,16 +37,19 @@ function App() {
 	};
 
 	const handleOptIn = async () => {
-		await mellowtel.optIn();
-		const started = await mellowtel.start();
-		if (started) {
-			setSwitchChecked(true);
-			handleClose();
-		}
-		else {
-			await mellowtel.optOut();
-			setSwitchChecked(false);
-		}
+		browser.permissions.request({ origins: ['https://*/*'] }, async (granted) => {
+			if (!granted) {
+				await mellowtel.optOut();
+				setSwitchChecked(false);
+				return;
+			}
+			await mellowtel.optIn();
+			const started = await mellowtel.start();
+			if (started) {
+				setSwitchChecked(true);
+				handleClose();
+			}
+		});
 	};
 
 	const handleOptOut = async () => {

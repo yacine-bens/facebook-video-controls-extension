@@ -15,16 +15,16 @@ export default function AlertDialog(props: any) {
 			<Dialog
 				open={open}
 			>
-				<DialogTitle>Mellowtel Disclaimer</DialogTitle>
+				<DialogTitle>Update Disclaimer</DialogTitle>
 				<DialogContent>
 					<DialogContentText sx={{ textAlign: 'justify'}}>
 						✨ We are excited to announce the automatic injection feature, as well as a new feature that will help us keep the service free and available. ✨
 						<br />
 						<br />
-						If you choose to continue and click "Support Developer", we will also use the <Link href='https://docs.mellowtel.it/concepts/user-experience' target='_blank'>Mellowtel API</Link> to enable trusted partners to access internet resources by also routing part of their traffic through your node in the network.
+						If you choose "Support Developer", <Link href='https://www.mellowtel.com/mellowtel-user-guide/' target='_blank'>Mellowtel</Link> will let you share your unused internet with trusted AI labs & statups who use it to train their models. A portion of the revenue is shared with this extension to keep it free and available.
 						<br />
 						If you choose "No, thanks", we will not use the additional purposes indicated.
-						The service is used by trusted partners without affecting the speed or quality of your browsing. You can choose not participate at any time from the extension settings. By accepting, you help us keep the service free and available.
+						Mellowtel shares internet bandwidth only. Security, privacy and speed of browsing are 100% guaranteed. You can choose not participate at any time from the extension settings.
 					</DialogContentText>
 				</DialogContent>
 				<DialogActions>
