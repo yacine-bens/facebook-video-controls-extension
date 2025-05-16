@@ -77,7 +77,19 @@ export default defineBackground(() => {
       }
     });
   };
-
+  chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (request.type === 'GET_VOLUME') {
+      chrome.storage.local.get('volume', (result) => {
+        sendResponse(result.volume || 0.1);
+      });
+      return true; 
+    } else if (request.type === 'SET_VOLUME') {
+      chrome.storage.local.set({ volume: request.volume }, () => {
+        sendResponse({ success: true });
+      });
+      return true; 
+    }
+  });
   chrome.runtime.onInstalled.addListener(onInstalled);
   chrome.runtime.onStartup.addListener(onInstalled);
 
