@@ -7,17 +7,17 @@ const showVideoControls = async () => {
 
   for (const videoElement of videoElements) {
     videoElement.controls = true;
-    
-    const volumeActual = await new Promise(resolve => 
-      chrome.runtime.sendMessage({type: 'GET_VOLUME'}, resolve)
+
+    const volumeActual = await new Promise(resolve =>
+      browser.runtime.sendMessage({ type: 'GET_VOLUME' }, resolve)
     );
-    
+
     videoElement.volume = volumeActual as number || 0.1;
 
     videoElement.addEventListener('volumechange', (event) => {
       const video = event.target as HTMLVideoElement;
       const newVolume = video.volume;
-      chrome.runtime.sendMessage({type: 'SET_VOLUME', volume: newVolume});
+      browser.runtime.sendMessage({ type: 'SET_VOLUME', volume: newVolume });
     });
 
     const nextSibling = videoElement.nextSibling as HTMLDivElement;

@@ -10,6 +10,7 @@ export default defineBackground(() => {
   });
 
   const showControlsStorage = storage.defineItem<string>("local:showControls", { defaultValue: "context-menu" });
+  const volumeStorage = storage.defineItem<number>("local:volume", { defaultValue: 0.1 });
 
   const onInstalled = async () => {
     const currentVersionStorage = storage.defineItem<string>("local:currentVersion");
@@ -76,19 +77,21 @@ export default defineBackground(() => {
       });
     }
   };
+
   browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.type === 'GET_VOLUME') {
-      browser.storage.local.get('volume', (result) => {
-        sendResponse(result.volume || 0.1);
+      volumeStorage.getValue().then((volume) => {
+        sendResponse(volume);
       });
-      return true; 
+      return true;
     } else if (request.type === 'SET_VOLUME') {
-      browser.storage.local.set({ volume: request.volume }, () => {
+      volumeStorage.setValue(request.volume).then(() => {
         sendResponse({ success: true });
       });
-      return true; 
+      return true;
     }
   });
+
   browser.runtime.onInstalled.addListener(onInstalled);
   browser.runtime.onStartup.addListener(onInstalled);
 
