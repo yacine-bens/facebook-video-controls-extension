@@ -6,21 +6,23 @@ export default defineContentScript({
 	runAt: 'document_end',
 	main: () => {
 		const runScript = async () => {
-			let observer = new MutationObserver((mutations) => {
+			const volumeStorage = storage.defineItem<number>('local:volume', { defaultValue: 0.1 });
+
+			let observer = new MutationObserver(async (mutations) => {
 				for (const mutation of mutations) {
-					showVideoControls();
+					showVideoControls(await volumeStorage.getValue());
 				}
 			});
 
 			const showControlsStorage = storage.defineItem<string>('local:showControls', { defaultValue: 'automatic' });
 			const showControlsStorageValue = await showControlsStorage.getValue();
 
-			const unwatch = showControlsStorage.watch((newValue) => {
+			const unwatch = showControlsStorage.watch(async (newValue) => {
 				if (newValue === 'context-menu') {
 					observer.disconnect();
 				}
 				else if (newValue === 'automatic') {
-					showVideoControls();
+					showVideoControls(await volumeStorage.getValue());
 					observer.observe(document.body, {
 						childList: true,
 						subtree: true,
@@ -29,7 +31,7 @@ export default defineContentScript({
 			});
 
 			if (showControlsStorageValue === 'automatic') {
-				showVideoControls();
+				showVideoControls(await volumeStorage.getValue());
 
 				observer.observe(document.body, {
 					childList: true,

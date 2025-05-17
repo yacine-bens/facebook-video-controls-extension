@@ -78,20 +78,6 @@ export default defineBackground(() => {
     }
   };
 
-  browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (request.type === 'GET_VOLUME') {
-      volumeStorage.getValue().then((volume) => {
-        sendResponse(volume);
-      });
-      return true;
-    } else if (request.type === 'SET_VOLUME') {
-      volumeStorage.setValue(request.volume).then(() => {
-        sendResponse({ success: true });
-      });
-      return true;
-    }
-  });
-
   browser.runtime.onInstalled.addListener(onInstalled);
   browser.runtime.onStartup.addListener(onInstalled);
 
@@ -104,12 +90,15 @@ export default defineBackground(() => {
     }
   })();
 
-  browser.contextMenus.onClicked.addListener((clickData, tab) => {
+  browser.contextMenus.onClicked.addListener(async (clickData, tab) => {
     if (clickData.menuItemId !== "facebook-video-controls") return;
+
+    const volume = await volumeStorage.getValue();
 
     browser.scripting.executeScript({
       target: { tabId: tab?.id! },
       func: showVideoControls,
+      args: [volume],
     });
   });
 

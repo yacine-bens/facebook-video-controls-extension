@@ -1,4 +1,4 @@
-const showVideoControls = async () => {
+const showVideoControls = async (volume: number) => {
   const { href } = window.location;
   if (!href.includes('reel') && !href.includes('stories')) return;
 
@@ -7,18 +7,7 @@ const showVideoControls = async () => {
 
   for (const videoElement of videoElements) {
     videoElement.controls = true;
-
-    const volumeActual = await new Promise(resolve =>
-      browser.runtime.sendMessage({ type: 'GET_VOLUME' }, resolve)
-    );
-
-    videoElement.volume = volumeActual as number || 0.1;
-
-    videoElement.addEventListener('volumechange', (event) => {
-      const video = event.target as HTMLVideoElement;
-      const newVolume = video.volume;
-      browser.runtime.sendMessage({ type: 'SET_VOLUME', volume: newVolume });
-    });
+    videoElement.volume = volume;
 
     const nextSibling = videoElement.nextSibling as HTMLDivElement;
     if (nextSibling && nextSibling.getAttributeNames().includes('data-instancekey')) {
