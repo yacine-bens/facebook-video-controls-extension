@@ -3,33 +3,30 @@ import { defineConfig, UserManifest } from 'wxt';
 const perBrowserManifest: Record<string, Record<number, UserManifest>> = ({
     chrome: {
         3: {
+            version: "1.1.1",
             permissions: [
                 "contextMenus",
                 "scripting",
                 "activeTab",
                 "storage",
-                "declarativeNetRequestWithHostAccess",
             ],
             optional_host_permissions: [
                 "*://*.facebook.com/*",
-                "https://*/*",
             ],
         }
     },
     firefox: {
         2: {
+            version: "1.1.1",
             permissions: [
                 "contextMenus",
                 "scripting",
                 "activeTab",
                 "storage",
-                "declarativeNetRequestWithHostAccess",
             ],
             optional_permissions: [
                 // @ts-expect-error
                 "*://*.facebook.com/*",
-                // @ts-expect-error
-                "https://*/*",
             ],
         }
     }
@@ -43,16 +40,5 @@ export default defineConfig({
         author: "https://github.com/yacine-bens",
         homepage_url: "https://github.com/yacine-bens/facebook-video-controls-extension",
         ...perBrowserManifest[browser][manifestVersion],
-        web_accessible_resources: [
-            {
-                resources: [
-                    "pascoli.html",
-                    "meucci.js",
-                ],
-                matches: [
-                    "<all_urls>",
-                ]
-            }
-        ]
     })
 });

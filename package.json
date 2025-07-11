@@ -4,7 +4,7 @@
   "author": "https://github.com/yacine-bens",
   "homepage": "https://github.com/yacine-bens/facebook-video-controls-extension",
   "private": true,
-  "version": "1.1.0",
+  "version": "1.1.1",
   "type": "module",
   "scripts": {
     "dev": "wxt",
@@ -26,10 +26,7 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
-    "@mellowtel/module-meucci": "^1.0.0",
-    "@mellowtel/module-pascoli": "^1.0.0",
     "@mui/material": "^7.0.2",
-    "mellowtel": "^1.6.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   }

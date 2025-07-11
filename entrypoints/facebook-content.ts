@@ -6,7 +6,7 @@ export default defineContentScript({
 	runAt: 'document_end',
 	main: () => {
 		const runScript = async () => {
-			const volumeStorage = storage.defineItem<number>('local:volume', { defaultValue: 0.1 });
+			const volumeStorage = storage.defineItem<number>('local:volume', { defaultValue: 1 });
 
 			let observer = new MutationObserver(async (mutations) => {
 				for (const mutation of mutations) {

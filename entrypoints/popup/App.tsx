@@ -1,48 +1,19 @@
 import { storage } from "#imports";
 import RadioButtonsGroup from "@/assets/components/RadioButtonsGroup";
-import { Box, FormControlLabel, Switch, Slider, Typography } from "@mui/material";
+import { Box, Slider, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import Mellowtel from "mellowtel";
-import { CONFIGURATION_KEY, MAX_DAILY_RATE, DISABLE_LOGS } from "@/constants";
 
 function App() {
 	const [showControlsState, setShowControlsState] = useState<string>('');
-	const [isSupportDev, setIsSupportDev] = useState<boolean>(false);
 	const [volumeValue, setVolumeValue] = useState<number>(0.1);
-
-	const mellowtel = new Mellowtel(CONFIGURATION_KEY, {
-		MAX_DAILY_RATE,
-		disableLogs: DISABLE_LOGS,
-	});
 
 	const radioButtons = [
 		{ value: 'automatic', label: 'Automatically' },
 		{ value: 'context-menu', label: 'Using Context-menu (Right Click)' },
 	];
 
-	const handleSwitchChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-		if (event.target.checked) {
-			const permissions = await browser.permissions.getAll();
-			if (!permissions.origins?.includes('https://*/*')) {
-				const disclaimerShown = storage.defineItem<boolean>("local:disclaimerShown", { defaultValue: false });
-				disclaimerShown.setValue(false);
-				await browser.runtime.openOptionsPage();
-				window.close();
-			}
-			else {
-				await mellowtel.optIn();
-				setIsSupportDev(true);
-				await mellowtel.start();
-			}
-		}
-		else {
-			await mellowtel.optOut();
-			setIsSupportDev(false);
-		}
-	};
-
 	const showControlsStorage = storage.defineItem<string>('local:showControls', { defaultValue: 'context-menu' });
-	const volumeStorage = storage.defineItem<number>('local:volume', { defaultValue: 0.1 });
+	const volumeStorage = storage.defineItem<number>('local:volume', { defaultValue: 1 });
 
 	const handleChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
 		if (event.target.value === 'automatic') {
@@ -88,13 +59,6 @@ function App() {
 			
 			const volumeValue = await volumeStorage.getValue();
 			setVolumeValue(volumeValue);
-			
-			const permissions = await browser.permissions.getAll();
-			if (!permissions.origins?.includes('https://*/*')) {
-				return;
-			}
-			const hasOptedIn = await mellowtel.getOptInStatus();
-			setIsSupportDev(hasOptedIn);
 		})();
 	}, []);
 
@@ -119,7 +83,6 @@ function App() {
 					valueLabelFormat={(value) => `${Math.round(value * 100)}%`}
 				/>
 			</Box>
-			<FormControlLabel sx={{ m: 1 }} control={<Switch checked={isSupportDev} onChange={handleSwitchChange} />} label="Support Developer ☕" />
 		</>
 	);
 };
